@@ -1,18 +1,23 @@
 package com.example.bookreplicajetpacktask
 
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
+import io.ktor.client.HttpClient
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.request.get
+import kotlinx.serialization.json.Json
 
-interface BookApi {
-    @GET("books")
-    suspend fun getBooks(): Response<List<Book>>
+class BookApi {
+    private val client = HttpClient {
+        install(JsonFeature) {
+            serializer = KotlinxSerializer(Json {
+                // Configure KotlinxSerialization if needed
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
+        }
+    }
+
+    suspend fun getAllBooks(): List<Book> {
+        return client.get("https://acharyaprashant.org/api/v2/legacy/books/")
+    }
 }
-
-val retrofit = Retrofit.Builder()
-    .baseUrl("https://acharyaprashant.org/api/v2/legacy/books/")
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
-
-val bookApi = retrofit.create(BookApi::class.java)

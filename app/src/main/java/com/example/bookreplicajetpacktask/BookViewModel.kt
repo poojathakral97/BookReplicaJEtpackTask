@@ -13,11 +13,15 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
     fun fetchBooks() {
         viewModelScope.launch {
             try {
-                _books.value = repository.getBooks()
+                _books.value = repository.getAllBooks()
             } catch (e: Exception) {
-                Log.e("ViewModel", "Failed to fetch books", e)
+                // Handle errors gracefully
+                e.printStackTrace()
             }
         }
     }
-    }
+}
+
+
+
 

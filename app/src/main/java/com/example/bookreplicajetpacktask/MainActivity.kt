@@ -1,10 +1,8 @@
 package com.example.bookreplicajetpacktask
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,9 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bookreplicajetpacktask.ui.theme.BookReplicaJEtpackTaskTheme
 
@@ -32,7 +28,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val bookViewModel: BookViewModel = viewModel(
-                        factory = BookViewModelFactory(BookRepository(bookApi))
+                        factory = BookViewModelFactory(BookRepository(BookApi()))
                     )
 
                     BookListScreen(bookViewModel = bookViewModel)
@@ -44,8 +40,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun BookListScreen(bookViewModel: BookViewModel = viewModel()) {
-    // Observe the books state
-    val books by remember { bookViewModel.books }
+    val books by bookViewModel.books
 
     Column {
         Text(text = "Books List")
@@ -61,7 +56,6 @@ fun BookListScreen(bookViewModel: BookViewModel = viewModel()) {
         }
     }
 
-    // Trigger the data fetch when the screen is first shown
     DisposableEffect(Unit) {
         bookViewModel.fetchBooks()
         onDispose { }
